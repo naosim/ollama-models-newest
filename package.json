@@ -1,0 +1,30 @@
+{
+  "name": "ollama-models-newest",
+  "version": "1.0.0",
+  "description": "Generate RSS feed for the newest Ollama models and publish to GitHub Pages",
+  "type": "module",
+  "scripts": {
+    "generate": "tsx src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test:sample": "tsx test/test-local.ts"
+  },
+  "keywords": [
+    "ollama",
+    "rss",
+    "feed",
+    "github-pages",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "feed": "^4.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
