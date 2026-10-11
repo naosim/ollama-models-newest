@@ -74,7 +74,26 @@ export function generateRssFeed(
   const targetModels = models.slice(0, maxItems);
 
   for (const model of targetModels) {
-    // Generate enriched HTML description
+    // Plain text description for snippet views & text-based RSS readers (Slack, Feedly snippets, etc.)
+    const plainLines: string[] = [];
+    if (model.description) {
+      plainLines.push(model.description);
+    }
+    const metaParts: string[] = [];
+    if (model.sizes.length > 0) metaParts.push(`Sizes: ${model.sizes.join(', ')}`);
+    if (model.capabilities.length > 0) metaParts.push(`Capabilities: ${model.capabilities.join(', ')}`);
+    if (model.pulls) metaParts.push(`Pulls: ${model.pulls}`);
+    if (model.tagsCount) metaParts.push(`Tags: ${model.tagsCount}`);
+    if (model.updatedAtText) {
+      metaParts.push(`Updated: ${model.updatedAtText}${model.relativeUpdated ? ` (${model.relativeUpdated})` : ''}`);
+    }
+    if (metaParts.length > 0) {
+      plainLines.push('');
+      plainLines.push(metaParts.join(' | '));
+    }
+    const plainDescription = plainLines.join('\n');
+
+    // Rich HTML for full-content readers
     const metaItems: string[] = [];
     if (model.sizes.length > 0) {
       metaItems.push(`<li><strong>Sizes:</strong> ${escapeHtml(model.sizes.join(', '))}</li>`);
@@ -96,14 +115,14 @@ export function generateRssFeed(
     const htmlContent = `
 <p>${escapeHtml(model.description || 'No description provided.')}</p>
 ${metaItems.length > 0 ? `<ul>${metaItems.join('')}</ul>` : ''}
-<p><a href="${escapeHtml(model.url)}" target="_blank" rel="noopener noreferrer">View model on Ollama</a></p>
+<p><a href="${escapeHtml(model.url)}" target="_blank" rel="noopener noreferrer">View ${escapeHtml(model.name)} on Ollama Library</a></p>
 `.trim();
 
     feed.addItem({
       title: model.name,
       id: model.url,
       link: model.url,
-      description: htmlContent,
+      description: plainDescription,
       content: htmlContent,
       date: model.updatedAt,
       published: model.updatedAt,
